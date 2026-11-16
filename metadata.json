@@ -1,0 +1,6 @@
+{
+  "name": "Formula Racing",
+  "description": "Car Racing: FORMULA - Next-generation 3D Formula racing simulator by Apex Dynamics Motorsport Studios with real-time vehicle physics, aerodynamics, AI opponents, and telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

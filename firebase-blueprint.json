@@ -1,0 +1,121 @@
+{
+  "entities": {
+    "PlayerProfile": {
+      "title": "PlayerProfile",
+      "description": "Apex Dynamics Formula driver profile",
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "driverLevel": { "type": "integer" },
+        "experiencePoints": { "type": "integer" },
+        "credits": { "type": "integer" },
+        "selectedVehicle": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastUpdatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["playerId", "displayName"]
+    },
+    "PlayerVehicle": {
+      "title": "PlayerVehicle",
+      "description": "Vehicle ownership and upgrade configuration",
+      "type": "object",
+      "properties": {
+        "vehicleId": { "type": "string" },
+        "vehicleName": { "type": "string" },
+        "owned": { "type": "boolean" },
+        "upgradeLevel": { "type": "integer" },
+        "engineLevel": { "type": "integer" },
+        "brakeLevel": { "type": "integer" },
+        "handlingLevel": { "type": "integer" },
+        "customization": { "type": "string" }
+      },
+      "required": ["vehicleId", "vehicleName", "owned"]
+    },
+    "RaceHistory": {
+      "title": "RaceHistory",
+      "description": "Completed Grand Prix race telemetry record",
+      "type": "object",
+      "properties": {
+        "raceId": { "type": "string" },
+        "trackId": { "type": "string" },
+        "vehicleId": { "type": "string" },
+        "finishingPosition": { "type": "integer" },
+        "raceTime": { "type": "number" },
+        "bestLap": { "type": "number" },
+        "completedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["raceId", "trackId", "finishingPosition"]
+    },
+    "Achievement": {
+      "title": "Achievement",
+      "description": "Unlocked racing achievement",
+      "type": "object",
+      "properties": {
+        "achievementId": { "type": "string" },
+        "title": { "type": "string" },
+        "isUnlocked": { "type": "boolean" },
+        "unlockedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["achievementId", "isUnlocked"]
+    },
+    "Championship": {
+      "title": "Championship",
+      "description": "Championship event details",
+      "type": "object",
+      "properties": {
+        "championshipId": { "type": "string" },
+        "name": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["championshipId", "name"]
+    },
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Season leaderboard entry",
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "bestLapTime": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["playerId", "bestLapTime"]
+    },
+    "DailyChallenge": {
+      "title": "DailyChallenge",
+      "description": "Daily motorsport challenge",
+      "type": "object",
+      "properties": {
+        "challengeId": { "type": "string" },
+        "title": { "type": "string" },
+        "rewardCredits": { "type": "integer" },
+        "isCompleted": { "type": "boolean" }
+      },
+      "required": ["challengeId", "title"]
+    },
+    "RewardTransaction": {
+      "title": "RewardTransaction",
+      "description": "Idempotent server-validated reward transaction",
+      "type": "object",
+      "properties": {
+        "transactionId": { "type": "string" },
+        "playerId": { "type": "string" },
+        "amount": { "type": "integer" },
+        "source": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["transactionId", "playerId", "amount"]
+    }
+  },
+  "firestore": {
+    "/players/{playerId}": { "schema": "PlayerProfile" },
+    "/players/{playerId}/vehicles/{vehicleId}": { "schema": "PlayerVehicle" },
+    "/players/{playerId}/raceHistory/{raceId}": { "schema": "RaceHistory" },
+    "/players/{playerId}/achievements/{achievementId}": { "schema": "Achievement" },
+    "/championships/{championshipId}": { "schema": "Championship" },
+    "/leaderboards/{seasonId}/players/{playerId}": { "schema": "LeaderboardEntry" },
+    "/dailyChallenges/{challengeId}": { "schema": "DailyChallenge" },
+    "/rewardTransactions/{transactionId}": { "schema": "RewardTransaction" }
+  }
+}

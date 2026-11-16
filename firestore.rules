@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(playerId) {
+      return isAuthenticated() && request.auth.uid == playerId;
+    }
+
+    function isValidPlayerProfile(data, playerId) {
+      return data.playerId == playerId
+        && data.displayName is string && data.displayName.size() > 0 && data.displayName.size() <= 60
+        && (!('driverLevel' in data) || (data.driverLevel is int && data.driverLevel >= 1))
+        && (!('experiencePoints' in data) || (data.experiencePoints is int && data.experiencePoints >= 0))
+        && (!('credits' in data) || (data.credits is int && data.credits >= 0))
+        && data.createdAt is timestamp;
+    }
+
+    function isValidVehicle(data) {
+      return data.vehicleId is string && data.vehicleId.size() > 0
+        && data.vehicleName is string && data.vehicleName.size() > 0
+        && data.owned is bool;
+    }
+
+    function isValidRaceHistory(data) {
+      return data.raceId is string && data.raceId.size() > 0
+        && data.trackId is string && data.trackId.size() > 0
+        && data.finishingPosition is int && data.finishingPosition >= 1;
+    }
+
+    match /players/{playerId} {
+      allow read: if isOwner(playerId);
+      allow create: if isOwner(playerId) && isValidPlayerProfile(request.resource.data, playerId);
+      allow update: if isOwner(playerId) && isValidPlayerProfile(request.resource.data, playerId);
+      allow delete: if isOwner(playerId);
+
+      match /vehicles/{vehicleId} {
+        allow read, write: if isOwner(playerId);
+      }
+      match /raceHistory/{raceId} {
+        allow read, write: if isOwner(playerId);
+      }
+      match /achievements/{achievementId} {
+        allow read, write: if isOwner(playerId);
+      }
+    }
+
+    match /championships/{championshipId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Admin / Cloud Function only
+    }
+
+    match /leaderboards/{seasonId}/players/{playerId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Server-side validated leaderboard submissions only
+    }
+
+    match /dailyChallenges/{challengeId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Server-side managed
+    }
+
+    match /rewardTransactions/{transactionId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Idempotent server-side transactions only
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
